@@ -6,7 +6,6 @@
 .idea/**/tasks.xml
 .idea/dictionaries
 .idea/*
-capstonemiddleware/__pycache__/*
 FaceNet/weights/*
 **/__pycache__/*
 **/*.swp
