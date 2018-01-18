@@ -12,7 +12,6 @@ def request(image):
         r = requests.post(serverURL, files={'image':image})
     else:
         r = requests.get(serverURL + '?url=' + image)
-    print(r.text)
     data = json.loads(r.text)
     if data['code'] == 0:
         labels = data['names']
@@ -20,4 +19,4 @@ def request(image):
         for (i, bounding_box) in enumerate(bounding_boxes):
             bounding_boxes[i] = json.loads('[' + bounding_box + ']')
         return [data['code'], labels, bounding_boxes]
-    return data['code']
+    return [data['code']]
