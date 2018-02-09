@@ -691,6 +691,8 @@ void save_image_png(image im, const char *name);
 // image.c
 void show_image(image p, const char *name);
 
+image crop_image(image im, int left, int top, int right, int bot);
+
 
 // -------------- parser.c --------------------
 

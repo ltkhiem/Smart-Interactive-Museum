@@ -27,7 +27,30 @@
 // get prediction boxes: yolov2_forward_network.c
 void get_region_boxes_cpu(layer l, int w, int h, float thresh, float **probs, box *boxes, int only_objectness, int *map);
 
+void print_boxes(image im, int num, float thresh, box *boxes, float **probs, int classes) 
+{
+    FILE *fp;
+    
+    fp = fopen("boxes_output.txt", "w");
+    
+    int i;
+    for (i = 0; i < num; ++i) {
+        int class = max_index(probs[i], classes);
+        float prob = probs[i][class];
+        if (prob > thresh) {
+            box b = boxes[i];
 
+            int left = (b.x - b.w / 2.)*im.w;
+			int right = (b.x + b.w / 2.)*im.w;
+			int top = (b.y - b.h / 2.)*im.h;
+			int bot = (b.y + b.h / 2.)*im.h;
+            
+            fprintf(fp, "%d %d %d %d\n", left, top, right, bot);            
+        }
+    }
+
+    fclose(fp);
+}
 // draw detection without OpenCV
 void draw_detections_cpu(image im, int num, float thresh, box *boxes, float **probs, char **names, image **alphabet, int classes)
 {
@@ -81,7 +104,7 @@ void draw_detections_cpu(image im, int num, float thresh, box *boxes, float **pr
 
 
 // Detect on Image: this function uses other functions not from this file
-void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *filename, float thresh)
+void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *filename, float thresh, char *crop)
 {
 	//image **alphabet = load_alphabet();			// image.c
 	image **alphabet = NULL;
@@ -129,22 +152,30 @@ void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *file
 #endif
 		printf("%s: Predicted in %f seconds.\n", input, (float)(clock() - time) / CLOCKS_PER_SEC); //sec(clock() - time));
 		get_region_boxes_cpu(l, 1, 1, thresh, probs, boxes, 0, 0);			// get_region_boxes(): region_layer.c
-
+        
 		//  nms (non maximum suppression) - if (IoU(box[i], box[j]) > nms) then remove one of two boxes with lower probability
 		if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);	// box.c
-		draw_detections_cpu(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);	// draw_detections(): image.c
-		save_image_png(im, "predictions");	// image.c
-		show_image(im, "predictions");		// image.c
+        // output the predictions image which has bounding boxes for detected object
+        if (crop == NULL) {
+            draw_detections_cpu(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);	// draw_detections(): image.c
+            save_image_png(im, "predictions");	// image.c
+            show_image(im, "predictions");		// image.c
 
-		free_image(im);					// image.c
-		free_image(sized);				// image.c
-		free(boxes);
-		free_ptrs((void **)probs, l.w*l.h*l.n);	// utils.c
-#ifdef OPENCV
-		cvWaitKey(0);
-		cvDestroyAllWindows();
-#endif
-		if (filename) break;
+            free_image(im);					// image.c
+            free_image(sized);				// image.c
+            free(boxes);
+            free_ptrs((void **)probs, l.w*l.h*l.n);	// utils.c
+    #ifdef OPENCV
+            cvWaitKey(0);
+            cvDestroyAllWindows();
+    #endif
+        }
+        else {
+            // crop all object detected in the input image
+           print_boxes(im, l.w*l.h*l.n, thresh, boxes, probs, l.classes); 
+        }
+
+        if (filename) break;
 	}
 }
 
@@ -432,6 +463,7 @@ void run_detector(int argc, char **argv)
 	char *cfg = argv[4];
 	char *weights = (argc > 5) ? argv[5] : 0;
 	char *filename = (argc > 6) ? argv[6] : 0;
+    char *crop = (argc > 7) ? argv[7] : 0;
 
 	// load object names
 	char **names = calloc(10000, sizeof(char *));
@@ -448,7 +480,7 @@ void run_detector(int argc, char **argv)
 	fclose(fp);
 	int classes = obj_count;
 
-	if (0 == strcmp(argv[2], "test")) test_detector_cpu(names, cfg, weights, filename, thresh);
+	if (0 == strcmp(argv[2], "test")) test_detector_cpu(names, cfg, weights, filename, thresh, crop);
 	//else if (0 == strcmp(argv[2], "train")) train_detector(datacfg, cfg, weights, gpus, ngpus, clear);
 	//else if (0 == strcmp(argv[2], "valid")) validate_detector(datacfg, cfg, weights);
 	//else if (0 == strcmp(argv[2], "recall")) validate_detector_recall(datacfg, cfg, weights);

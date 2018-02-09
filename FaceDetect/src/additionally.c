@@ -1507,6 +1507,19 @@ float get_color(int c, int x, int max)
 	return r;
 }
 
+image crop_image(image im, int left, int top, int right, int bot)
+{
+    int w = right - left + 1;
+    int h = bot - top + 1;
+    image crop = make_image(w, h, im.c);
+    for (int k = 0; k < im.c; ++k) 
+        for(int c = left; c <= right; ++c)
+            for(int r = top; r <= bot; ++r) {
+                int val = get_pixel(im, c, r, k);
+                set_pixel(crop, c - left, r - top, k, val);
+            }
+    return crop;
+}
 
 // -------------- option_list.c --------------------
 
