@@ -125,7 +125,8 @@ void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *file
 			if (!input) return;
 			strtok(input, "\n");
 		}
-        if (0 == strcmp(input, "stream")) strcpy(input, "");
+
+        if (0 == strcmp(input, "stream")) input = 0;
 
 		image im = load_image(input, 0, 0, 3);			// image.c
 		image sized = resize_image(im, net.w, net.h);	// image.c
