@@ -27,6 +27,24 @@ def getImageBoxes(img_str):
     
     return img, boxes
 
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
+=======
+def getHttpReponseFromFaceResults(labels, boxes):
+    tempres = [0, labels, boxes]
+
+    if tempres[0] != 0:
+        return httpresponse('fail')
+    else:
+        code, labels, bounding_boxs = tempres
+        res = dict()
+        res['results'] = []
+        for i in range(labels.__len__()):
+            res['results'].append({"name": labels[i], "boundingbox": bounding_boxs[i]})
+        res = json.dumps(res)
+    return httpresponse(res)
+
+
+>>>>>>> Initialize new branch
 def serverCall(content):
     if type(content).__name__ == "InMemoryUploadedFile":
 
@@ -43,6 +61,7 @@ def serverCall(content):
         else:
             labels = []
 
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
         tempRes = [0, labels, boxes]
 
         if tempRes[0] != 0:
@@ -55,6 +74,24 @@ def serverCall(content):
                 res['results'].append({"name": labels[i], "boundingbox": bounding_boxs[i]})
             res = json.dumps(res)
         return HttpResponse(res)
+=======
+        return getHttpReponseFromFaceResults(labels, boxes)
+
+    else:
+
+        print('Not implemented this feature')
+
+        return [1]
+
+def facenetv2_serverCall(img):
+    if type(content).__name__ == "InMemoryUploadedFile":
+
+        img_str = content.read()
+       
+        
+
+        return getHttpReponseFromFaceResults(labels, boxes) 
+>>>>>>> Initialize new branch
 
     else:
 
@@ -66,6 +103,12 @@ def addSampleCall(label, image):
     img_str = image.read()
 
     img, boxes = getImageBoxes(img_str)
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
+=======
+    
+    if len(boxes) == 0:
+        boxes.append([0, 0, img.shape[1]-1, img.shape[0] - 1])
+>>>>>>> Initialize new branch
 
     print('Passing label, image and boxes into FaceNet API...')
     fr.addsample(label, img, boxes)
@@ -74,7 +117,10 @@ def addSampleCall(label, image):
     return HttpResponse()
     
 
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
 
+=======
+>>>>>>> Initialize new branch
 @csrf_exempt
 def rec_list(request):
     if request.method == 'POST':
