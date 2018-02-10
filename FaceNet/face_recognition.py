@@ -12,10 +12,8 @@ K.set_image_data_format('channels_first')
 import numpy as np
 from numpy import genfromtxt
 import tensorflow as tf
-from fr_utils import *
-from inception_block import *
-import sys
-sys.path.append('..')
+from FaceNet.fr_utils import *
+from FaceNet.inception_block import *
 from Log import logger
 
 FRmodel = faceRecoModel(input_shape=(3, 96, 96)) # Total params ~ 3.75 millions
@@ -41,9 +39,9 @@ load_weights_from_FaceNet(FRmodel)
 logger.info('Loading Weights Completed')
 
 #Face Verification
-def verify(image_path, identity, database, model):
+def verify(img, identity, database, model):
     # Step 1: Compute the encoding for the image. Use img_to_encoding() see example above. (≈ 1 line)
-    encoding = img_to_encoding(image_path, model)
+    encoding = img_to_encoding(img, model)
 
     # Step 2: Compute distance with identity's image (≈ 1 line)
     dist = np.linalg.norm(database[identity] - encoding)
@@ -52,9 +50,9 @@ def verify(image_path, identity, database, model):
 
     return dist, accept
 
-def recognize(image_path, database, model):
+def recognize_single(img, database, model):
     ## Step 1: Compute the target "encoding" for the image. Use img_to_encoding() see example above. ## (≈ 1 line)
-    encoding = img_to_encoding(image_path, model)
+    encoding = img_to_encoding(img, model)
     
     ## Step 2: Find the closest encoding ##
     
@@ -66,6 +64,8 @@ def recognize(image_path, database, model):
         
         # Compute L2 distance between the target "encoding" and the current "emb" from the database. (≈ 1 line)
         dist = np.linalg.norm(db_enc - encoding)
+        
+        print('\tdistance to "%s" is %f' % (name, dist))
 
         # If this distance is less than the min_dist, then set min_dist to dist, and identity to name. (≈ 3 lines)
         if min_dist > dist:
@@ -75,10 +75,31 @@ def recognize(image_path, database, model):
     ### END CODE HERE ###
     return min_dist, identity
 
-database['phuc'] = img_to_encoding('images/phuc.jpg', FRmodel)
-database['trong'] = img_to_encoding('images/trong.jpg', FRmodel)
-database['minh'] = img_to_encoding('images/minh.jpg', FRmodel)
-database['obama'] = img_to_encoding('images/obama.jpg', FRmodel)
-database['trump'] = img_to_encoding('images/trump.jpg', FRmodel)
+def recognize(img, boxes, database, model):
 
-print(who_is_it('images/new.jpg', database, FRmodel))
+    results = []
+
+    for (i, box) in enumerate(boxes):
+        print('Processing box [%d %d %d %d]' % tuple(box)) 
+        left, top, right, bot = box
+        crop_img = img[top:bot+1, left:right+1]
+
+        # resize image to match the require size of the input layer
+        resized_img = cv2.resize(crop_img, (96, 96))
+        
+        min_dist, identity = recognize_single(resized_img, database, model)
+        
+        if min_dist < 0.7:
+            results.append((min_dist, identity))
+        else:
+            results.append((min_dist, 'unknown'))
+    
+    return results
+        
+database = {}
+database['phuc'] = img_to_encoding_from_path('FaceNet/images/phuc.jpg', FRmodel)
+database['trong'] = img_to_encoding_from_path('FaceNet/images/trong.jpg', FRmodel)
+database['minh'] = img_to_encoding_from_path('FaceNet/images/minh.jpg', FRmodel)
+database['obama'] = img_to_encoding_from_path('FaceNet/images/obama.jpg', FRmodel)
+database['trump'] = img_to_encoding_from_path('FaceNet/images/trump.jpg', FRmodel)
+

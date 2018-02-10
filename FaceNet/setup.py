@@ -7,8 +7,10 @@ servers = ['Coursera', 'Google_Drive']
 server_choice = 'Google_Drive'
 
 if server_choice == 'Google_Drive':
-    url = 'https://doc-04-8c-docs.googleusercontent.com/docs/securesc/jom54uhlm38kbdbc4ieju7iinr3l6rtq/718st97db1d4pbvcq1oo32sbg34i10s0/1517853600000/14245259923038140095/14245259923038140095/1dprlnrrkEW1EFCjH3LT3fAebKli5WT-I?h=00618131565082042131&e=download'
-    params = {'Cookie': 'AUTH_hqnkml8mu55ivs1c2tqkjvtfh1nl4uhg=14245259923038140095|1517832000000|16qdno1t9lu0tj31lptbcbcs5puknlm0'}
+    #url = 'https://doc-04-8c-docs.googleusercontent.com/docs/securesc/jom54uhlm38kbdbc4ieju7iinr3l6rtq/718st97db1d4pbvcq1oo32sbg34i10s0/1517853600000/14245259923038140095/14245259923038140095/1dprlnrrkEW1EFCjH3LT3fAebKli5WT-I?h=00618131565082042131&e=download'
+    url = 'https://doc-04-8c-docs.googleusercontent.com/docs/securesc/jom54uhlm38kbdbc4ieju7iinr3l6rtq/7kalgbjnkr7laj1a9iuga0q3skv5l9d1/1518264000000/14245259923038140095/14245259923038140095/1dprlnrrkEW1EFCjH3LT3fAebKli5WT-I?h=00618131565082042131&e=download'
+    #params = {'Cookie': 'AUTH_hqnkml8mu55ivs1c2tqkjvtfh1nl4uhg=14245259923038140095|1517832000000|16qdno1t9lu0tj31lptbcbcs5puknlm0'}
+    params = {'Cookie': 'AUTH_hqnkml8mu55ivs1c2tqkjvtfh1nl4uhg=14245259923038140095|1518264000000|p0djdvj6i0k3ks1h3558dk0g2gjom6n0'}
     
     print('Downloading weights.tar')
     r = requests.get(url, headers = params)

@@ -140,13 +140,13 @@ def load_weights_from_FaceNet(FRmodel):
 
 def load_weights():
     # Set weights path
-    if os.path.isfile('./weights/weights_dict.npy'):
-        return np.load('./weights/weights_dict.npy').item()
+    if os.path.isfile('./FaceNet/weights/weights_dict.npy'):
+        return np.load('./FaceNet/weights/weights_dict.npy').item()
 
-    if not os.path.isdir('weights'):
+    if not os.path.isdir('FaceNet/weights'):
         from FaceNet import setup
 
-    dirPath = './weights'
+    dirPath = './FaceNet/weights'
     fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirPath))
     paths = {}
     weights_dict = {}
@@ -173,10 +173,10 @@ def load_weights():
             dense_w = np.transpose(dense_w, (1, 0))
             dense_b = genfromtxt(dirPath+'/dense_b.csv', delimiter=',', dtype=None)
             weights_dict[name] = [dense_w, dense_b]
-    shutil.rmtree('./weights')
+    shutil.rmtree('./FaceNet/weights')
     
-    os.mkdir('weights')
-    np.save('./weights/weights_dict', weights_dict)
+    os.mkdir('FaceNet/weights')
+    np.save('./FaceNet/weights/weights_dict', weights_dict)
     return weights_dict
 
 
@@ -196,10 +196,19 @@ def ldebugoad_dataset():
     
     return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
 
-def img_to_encoding(image_path, model):
-    img1 = cv2.imread(image_path, 1)
+def img_to_encoding(img1, model):
     img = img1[...,::-1]
     img = np.around(np.transpose(img, (2,0,1))/255.0, decimals=12)
     x_train = np.array([img])
     embedding = model.predict_on_batch(x_train)
     return embedding
+
+def img_to_encoding_from_path(image_path, model):
+    img1 = cv2.imread(image_path, 1)
+    img = img1[...,::-1]
+    img = cv2.resize(img, (96, 96))
+    img = np.around(np.transpose(img, (2,0,1))/255.0, decimals=12)
+    x_train = np.array([img])
+    embedding = model.predict_on_batch(x_train)
+    return embedding
+
