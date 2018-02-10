@@ -29,10 +29,6 @@ void get_region_boxes_cpu(layer l, int w, int h, float thresh, float **probs, bo
 
 void print_boxes(image im, int num, float thresh, box *boxes, float **probs, int classes) 
 {
-    FILE *fp;
-    
-    fp = fopen("boxes_output.txt", "w");
-    
     int i;
     for (i = 0; i < num; ++i) {
         int class = max_index(probs[i], classes);
@@ -45,11 +41,10 @@ void print_boxes(image im, int num, float thresh, box *boxes, float **probs, int
 			int top = (b.y - b.h / 2.)*im.h;
 			int bot = (b.y + b.h / 2.)*im.h;
             
-            fprintf(fp, "%d %d %d %d\n", left, top, right, bot);            
+            printf("%d %d %d %d\n", left, top, right, bot);            
         }
     }
 
-    fclose(fp);
 }
 // draw detection without OpenCV
 void draw_detections_cpu(image im, int num, float thresh, box *boxes, float **probs, char **names, image **alphabet, int classes)
@@ -130,6 +125,8 @@ void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *file
 			if (!input) return;
 			strtok(input, "\n");
 		}
+        if (0 == strcmp(input, "stream")) strcpy(input, "");
+
 		image im = load_image(input, 0, 0, 3);			// image.c
 		image sized = resize_image(im, net.w, net.h);	// image.c
 		layer l = net.layers[net.n - 1];
@@ -150,7 +147,7 @@ void test_detector_cpu(char **names, char *cfgfile, char *weightfile, char *file
 		network_predict_cpu(net, X);
 #endif
 #endif
-		printf("%s: Predicted in %f seconds.\n", input, (float)(clock() - time) / CLOCKS_PER_SEC); //sec(clock() - time));
+		//printf("%s: Predicted in %f seconds.\n", input, (float)(clock() - time) / CLOCKS_PER_SEC); //sec(clock() - time));
 		get_region_boxes_cpu(l, 1, 1, thresh, probs, boxes, 0, 0);			// get_region_boxes(): region_layer.c
         
 		//  nms (non maximum suppression) - if (IoU(box[i], box[j]) > nms) then remove one of two boxes with lower probability
