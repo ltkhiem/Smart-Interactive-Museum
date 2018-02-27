@@ -9,6 +9,7 @@
 FaceNet/weights/*
 **/__pycache__/*
 **/*.swp
+**/*.pyc
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
