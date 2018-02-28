@@ -1,4 +1,38 @@
 # Smart-Interactive-Museum
+-------------------------
+
+# API list
+
+## Create repo
+
+- type: POST
+- url: baseurl/createrepo
+- request: {reponame: string, secret: string}
+- response: true/false
+## Create class
+
+- type: POST
+- url: baseurl/repo/**reponame**/createclass
+- request: {secret: string, classname: string}
+- response: true/false
+## Upload file
+
+- type: POST
+- url: baseurl/repo/**reponame**/**classname**/upload
+- body: {img: image file}
+## Train class
+
+??? Ask Tien? Train class or train all repo?
+
+
+
+## Recognize
+
+- type: POST
+- url: baseurl/recognize/      ??? => change when use many repo to: baseurl/**classname**/recognize
+- body: {img: test image, server: tien/anhAn}
+
+
 What is smart interactive museum?
     - blah blah blah
 
