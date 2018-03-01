@@ -29,7 +29,7 @@ def serverCall(content):
         print('Converted boxes: ' + str(boxes))
 
         print('Passing image and boxes into FaceNet API...')
-        results = fr.recognize(img, boxes, fr.database, fr.FRmodel)
+        results = fr.recognize(img, boxes)
         print('Recognize: ' + str(results))
 
         if len(results) > 0:

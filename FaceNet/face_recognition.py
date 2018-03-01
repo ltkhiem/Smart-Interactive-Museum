@@ -15,6 +15,7 @@ import tensorflow as tf
 from FaceNet.fr_utils import *
 from FaceNet.inception_block import *
 from Log import logger
+from FaceNet.drapi import *
 
 FRmodel = faceRecoModel(input_shape=(3, 96, 96)) # Total params ~ 3.75 millions
 
@@ -75,7 +76,9 @@ def recognize_single(img, database, model):
     ### END CODE HERE ###
     return min_dist, identity
 
-def recognize(img, boxes, database, model):
+def recognize(img, boxes):
+
+    database = Load_FaceNet_Database()
 
     results = []
 
@@ -87,7 +90,7 @@ def recognize(img, boxes, database, model):
         # resize image to match the require size of the input layer
         resized_img = cv2.resize(crop_img, (96, 96))
         
-        min_dist, identity = recognize_single(resized_img, database, model)
+        min_dist, identity = recognize_single(resized_img, database, FRmodel)
         
         if min_dist < 0.7:
             results.append((min_dist, identity))
@@ -95,11 +98,3 @@ def recognize(img, boxes, database, model):
             results.append((min_dist, 'unknown'))
     
     return results
-        
-database = {}
-database['phuc'] = img_to_encoding_from_path('FaceNet/images/phuc.jpg', FRmodel)
-database['trong'] = img_to_encoding_from_path('FaceNet/images/trong.jpg', FRmodel)
-database['minh'] = img_to_encoding_from_path('FaceNet/images/minh.jpg', FRmodel)
-database['obama'] = img_to_encoding_from_path('FaceNet/images/obama.jpg', FRmodel)
-database['trump'] = img_to_encoding_from_path('FaceNet/images/trump.jpg', FRmodel)
-
