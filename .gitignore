@@ -6,7 +6,11 @@
 .idea/**/tasks.xml
 .idea/dictionaries
 .idea/*
-capstonemiddleware/__pycache__/*
+FaceNet/weights/*
+**/weights/*
+**/__pycache__/*
+**/*.swp
+**/*.pyc
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/

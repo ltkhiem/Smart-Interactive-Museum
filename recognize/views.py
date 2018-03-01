@@ -9,16 +9,26 @@ from capstonemiddleware import ServerCallAPI
 def rec_list(request):
     if request.method == 'POST':
         img = request.FILES['img']
-        response = ServerCallAPI.request(img)
-        if response[0] != 0:
-            return HttpResponse('fail')
+        server = request.POST['server']
+        if (server == 'anhAn'):
+            response = ServerCallAPI.requestAnhAn(img)
+            print(response)
+            if response[0] != 0:
+                return HttpResponse('fail')
+            else:
+                code, labels, bounding_boxs = response
+                res = dict()
+                res['results'] = []
+                for i in range(labels.__len__()):
+                    res['results'].append({"name": labels[i], "boundingbox": bounding_boxs[i]})
+                res = json.dumps(res)
+            return HttpResponse(res)
+        elif server == 'tien':
+            response = ServerCallAPI.requestTien(img)
+            print(response)
+            return HttpResponse(str(response))
         else:
-            code, labels, bounding_boxs = response
-            res = dict()
-            res['results'] = []
-            for i in range(labels.__len__()):
-                res['results'].append({"name": labels[i], "boundingbox": bounding_boxs[i]})
-            res = json.dumps(res)
-        return HttpResponse(res)
+            print("not an valid server")
+            raise Exception
     else:
         return HttpResponse("fail")
