@@ -15,6 +15,7 @@ import tensorflow as tf
 from FaceNet.fr_utils import *
 from FaceNet.inception_block import *
 from Log import logger
+from FaceNet.drapi import *
 
 FRmodel = faceRecoModel(input_shape=(3, 96, 96)) # Total params ~ 3.75 millions
 
@@ -36,7 +37,10 @@ def triplet_loss(y_true, y_pred, alpha = 0.2):
 FRmodel.compile(optimizer = 'adam', loss = triplet_loss, metrics = ['accuracy'])
 logger.info('Loading Weights')
 load_weights_from_FaceNet(FRmodel)
-logger.info('Loading Weights Completed')
+
+img_to_encoding_from_path('FaceNet/images/minh.jpg', FRmodel)
+logger.info('Loading Database')
+database = Load_FaceNet_Database()
 
 #Face Verification
 def verify(img, identity, database, model):
@@ -49,6 +53,15 @@ def verify(img, identity, database, model):
     accept = dist < 0.7
 
     return dist, accept
+
+def getface(img, box):
+    left, top, right, bot = box
+    crop_img = img[top:bot+1, left:right+1]
+
+    # resize image to match the require size of the input layer
+    resized_img = cv2.resize(crop_img, (96, 96))
+    return resized_img
+
 
 def recognize_single(img, database, model):
     ## Step 1: Compute the target "encoding" for the image. Use img_to_encoding() see example above. ## (≈ 1 line)
@@ -75,19 +88,15 @@ def recognize_single(img, database, model):
     ### END CODE HERE ###
     return min_dist, identity
 
-def recognize(img, boxes, database, model):
+def recognize(img, boxes):
 
     results = []
 
     for (i, box) in enumerate(boxes):
         print('Processing box [%d %d %d %d]' % tuple(box)) 
-        left, top, right, bot = box
-        crop_img = img[top:bot+1, left:right+1]
+        face = getface(img, box) 
 
-        # resize image to match the require size of the input layer
-        resized_img = cv2.resize(crop_img, (96, 96))
-        
-        min_dist, identity = recognize_single(resized_img, database, model)
+        min_dist, identity = recognize_single(face, database, FRmodel)
         
         if min_dist < 0.7:
             results.append((min_dist, identity))
@@ -95,11 +104,15 @@ def recognize(img, boxes, database, model):
             results.append((min_dist, 'unknown'))
     
     return results
-        
-database = {}
-database['phuc'] = img_to_encoding_from_path('FaceNet/images/phuc.jpg', FRmodel)
-database['trong'] = img_to_encoding_from_path('FaceNet/images/trong.jpg', FRmodel)
-database['minh'] = img_to_encoding_from_path('FaceNet/images/minh.jpg', FRmodel)
-database['obama'] = img_to_encoding_from_path('FaceNet/images/obama.jpg', FRmodel)
-database['trump'] = img_to_encoding_from_path('FaceNet/images/trump.jpg', FRmodel)
+
+def encode(img, box):
+    face = getface(img, box)
+    return img_to_encoding(face, FRmodel)
+
+def addsample(label, img, boxes):
+   
+    box = boxes[0]
+    code = encode(img, box)
+
+    Add_New_Encoding(label, code)
 
