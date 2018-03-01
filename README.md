@@ -6,19 +6,19 @@
 ## Create repo
 
 - type: POST
-- url: baseurl/createrepo
+- url: **baseurl**/repo/createrepo
 - request: {reponame: string, secret: string}
 - response: true/false
 ## Create class
 
 - type: POST
-- url: baseurl/repo/**reponame**/createclass
+- url: **baseurl**/repo/**reponame**/createclass
 - request: {secret: string, classname: string}
 - response: true/false
 ## Upload file
 
 - type: POST
-- url: baseurl/repo/**reponame**/**classname**/upload
+- url: **baseurl**/repo/**reponame**/**classname**/upload
 - body: {img: image file}
 ## Train class
 
@@ -29,7 +29,7 @@
 ## Recognize
 
 - type: POST
-- url: baseurl/recognize/      ??? => change when use many repo to: baseurl/**classname**/recognize
+- url: **baseurl**/recognize/      ??? => change when use many repo to: **baseurl**/**classname**/recognize
 - body: {img: test image, server: tien/anhAn}
 
 
