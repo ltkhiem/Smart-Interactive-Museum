@@ -8,6 +8,7 @@
 .idea/*
 FaceNet/weights/*
 **/weights/*
+**/weights.*
 **/__pycache__/*
 **/*.swp
 **/*.pyc
