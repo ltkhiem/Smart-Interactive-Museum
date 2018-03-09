@@ -1,1 +1,2 @@
 VRCBTest1.apk filter=lfs diff=lfs merge=lfs -text
+MuseumVirtualTour filter=lfs diff=lfs merge=lfs -text
