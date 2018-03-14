@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/chequochuu/Smart-Interactive-Museum.svg?token=zqCLPftiBUBoP2cktddN&branch=master)](https://travis-ci.com/chequochuu/Smart-Interactive-Museum)
+[![Build Status](https://travis-ci.com/chequochuu/Smart-Interactive-Museum.svg?token=zqCLPftiBUBoP2cktddN&branch=server)](https://travis-ci.com/chequochuu/Smart-Interactive-Museum)
 # Smart-Interactive-Museum
 -------------------------
 
