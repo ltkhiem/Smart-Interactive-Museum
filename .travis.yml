@@ -15,10 +15,8 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  # Replace dep1 dep2 ... with your dependencies
   - conda env create -f environment.yml
   - source activate capstone 
-  - python setup.py install
 
 script:
   - python manage.py test
