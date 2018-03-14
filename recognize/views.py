@@ -1,11 +1,19 @@
 import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 from capstonemiddleware import ServerCallAPI
+
 
 # Create your views here.
 
-@csrf_exempt
+# @csrf_exempt
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def rec_list(request):
     if request.method == 'POST':
         img = request.FILES['img']
