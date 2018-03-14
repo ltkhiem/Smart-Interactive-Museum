@@ -56,9 +56,11 @@ class myTests(SimpleTestCase):
         response = self.client.post('/repo/createrepo/', {'reponame': 'aaa', 'secret' :'cccvzse'})
         response = self.client.post('/repo/aaa/createclass/', {'secret' :'cccvzse', 'classname': 'name1'})
         response = self.client.post('/repo/aaa/name1/', {'img' :'cccvzse', 'classname': 'name1'})
-        with open('/home/che/Pictures/Screenshot from 2017-08-11 22-01-24.png', 'rb') as f:
+        with open('2.png', 'rb') as f:
             response = self.client.post('/repo/aaa/name1/upload/', {'img': f, 'secret': 'cccvzse'})
-
+        with open('2.png', 'rb') as f:
+            response = self.client.post('/recognize/', {'img': f, 'server': 'anhAn'})
+        print(response)
 
 
 from django.test import Client
