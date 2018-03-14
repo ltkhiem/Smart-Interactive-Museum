@@ -19,7 +19,7 @@
 
 - type: POST
 - url: **baseurl**/repo/**reponame**/**classname**/upload
-- body: {img: image file}
+- body: {img: image file, secret: string}
 ## Train class
 
 ??? Ask Tien? Train class or train all repo?

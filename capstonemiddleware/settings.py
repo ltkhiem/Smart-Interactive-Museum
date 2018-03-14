@@ -119,6 +119,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-REPO_URL = '/home/che/capstoneRepo/'
+REPO_URL = os.getenv('HOME') + '/capstoneRepo/'
 IMAGE_NAME = 1
 # APPEND_SLASH=False

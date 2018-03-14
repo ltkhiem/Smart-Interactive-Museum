@@ -2,6 +2,9 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from django.test import tag
 from django.test import SimpleTestCase
+from capstonemiddleware.settings import REPO_URL
+import os
+import shutil
 
 #class MySeleniumTests(StaticLiveServerTestCase):
 #    fixtures = ['user-data.json']
@@ -27,6 +30,12 @@ from django.test import SimpleTestCase
 #        password_input.send_keys('secret')
 #        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
 
+def resetRepo():
+    for i in os.listdir(REPO_URL):
+        shutil.rmtree(REPO_URL + i)
+
+from io import BytesIO
+
 class myTests(SimpleTestCase):
     @tag('a')
     def test_zzcreaterepo(self):
@@ -41,6 +50,14 @@ class myTests(SimpleTestCase):
 #        print(response.status_code)
 #        print(response.content)
         print('zzzzzzzzzzzzz')
+
+    @tag('b')
+    def test_recognize(self):
+        response = self.client.post('/repo/createrepo/', {'reponame': 'aaa', 'secret' :'cccvzse'})
+        response = self.client.post('/repo/aaa/createclass/', {'secret' :'cccvzse', 'classname': 'name1'})
+        response = self.client.post('/repo/aaa/name1/', {'img' :'cccvzse', 'classname': 'name1'})
+        with open('/home/che/Pictures/Screenshot from 2017-08-11 22-01-24.png', 'rb') as f:
+            response = self.client.post('/repo/aaa/name1/upload/', {'img': f, 'secret': 'cccvzse'})
 
 
 
