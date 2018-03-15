@@ -41,7 +41,11 @@ load_weights_from_FaceNet(FRmodel)
 img_to_encoding_from_path('FaceNet/images/minh.jpg', FRmodel)
 logger.info('Loading Database')
 database = Load_FaceNet_Database()
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
 
+=======
+#Clear_Database()
+>>>>>>> Initialize new branch
 #Face Verification
 def verify(img, identity, database, model):
     # Step 1: Compute the encoding for the image. Use img_to_encoding() see example above. (≈ 1 line)
@@ -56,11 +60,35 @@ def verify(img, identity, database, model):
 
 def getface(img, box):
     left, top, right, bot = box
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
     crop_img = img[top:bot+1, left:right+1]
 
     # resize image to match the require size of the input layer
     resized_img = cv2.resize(crop_img, (96, 96))
     return resized_img
+=======
+
+    left = min(max(left, 0), img.shape[1] - 1)
+    right = min(max(right,0), img.shape[1] - 1)
+    bot = min(max(bot, 0), img.shape[0] - 1)
+    top = min(max(top, 0), img.shape[0] - 1)
+    
+    crop_image = img[top:bot+1, left:right+1]
+
+    m, n = crop_image.shape[0:2]
+    x, y = 96, int(96 * n / m)
+    if x < y:
+        x, y = int(96 * m / n), 96
+
+    resized_image = cv2.resize(crop_image, (y, x))
+    left = int((96 - y) / 2)
+    right = 96 - left - y
+    top = int((96 - x) / 2)
+    bot = 96 - top - x
+
+    face = cv2.copyMakeBorder(resized_image, top, bot, left, right, cv2.BORDER_REPLICATE)
+    return face
+>>>>>>> Initialize new branch
 
 
 def recognize_single(img, database, model):
@@ -115,4 +143,8 @@ def addsample(label, img, boxes):
     code = encode(img, box)
 
     Add_New_Encoding(label, code)
+<<<<<<< 869b351157246f70e32660a092aa83d6b95adf57
 
+=======
+        
+>>>>>>> Initialize new branch
