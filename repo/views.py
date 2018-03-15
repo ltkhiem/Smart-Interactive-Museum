@@ -1,52 +1,72 @@
 import os
-import sys
-import io
-from .forms import *
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.edit import FormView, View
-from PIL import Image
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
-from capstonemiddleware.settings import REPO_URL, IMAGE_NAME
+from capstonemiddleware.settings import REPO_URL
+from repo.models import Repo
+from repo.permissions import IsOwner
+from repo.serializers import RepoSerializer, ClassSerializer
+
 
 # Create your views here.
 
-@csrf_exempt
-def createRepo(request):
-    if (request.method == 'GET'):
-        return HttpResponse("fail")
-    repoName = request.POST['reponame']
-    newRepoUrl = REPO_URL+repoName
-    secret = request.POST['secret']
-    if (os.path.isdir(newRepoUrl)):
-        return HttpResponse("this repo has already occupied")
-    os.makedirs(newRepoUrl)
-    print(newRepoUrl)
-    with open(newRepoUrl + '/secret.txt', 'w') as f:
-        f.write(secret)
-    return HttpResponse("create repo " + repoName + " successfully")
+# class CreateRepoView(generics.ListCreateAPIView):
+#     queryset = Repo.objects.all()
+#     serializer_class = RepoSerializer
+#     permission_classes = (IsAuthenticated, IsOwner,)
+#
+#     def perform_create(self, serializer):
+#         serializer.save()
 
-@csrf_exempt
-def createClass(request, reponame):
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def create_repo(request):
     if request.method == 'GET':
         return HttpResponse("fail")
-    newRepoUrl = REPO_URL + reponame + '/'
-    if not os.path.isdir(newRepoUrl):
-        return HttpResponse("this repo doesn't exist")
-    className = request.POST['classname']
-    secret = request.POST['secret']
-    with open(newRepoUrl + '/secret.txt', 'r' ) as f:
-        realSecret = f.read()
-    if secret != realSecret:
-        return HttpResponse("secret is not true")
-    newClassUrl = newRepoUrl + className + '/'
-    if os.path.isdir(newClassUrl):
-        return HttpResponse("this class has already occupied")
-    os.makedirs(newClassUrl)
-    return HttpResponse("create class " + className + " successfully")
+    serializer = RepoSerializer(data=request.data)
+    if serializer.is_valid():
+        repo_name = request.POST['name']
+        new_repo_url = REPO_URL + repo_name
+        if os.path.isdir(new_repo_url):
+            return HttpResponse("this repo has already occupied")
+        os.makedirs(new_repo_url)
+        serializer.save(owner=request.user)
+        return HttpResponse("create repo " + repo_name + " successfully")
+    return HttpResponse("fail")
 
-@csrf_exempt
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def create_class(request, repo_name):
+    if request.method == 'GET':
+        return HttpResponse("fail")
+    serializer = ClassSerializer(data=request.data)
+    if serializer.is_valid():
+        repo = Repo.objects.get(name=repo_name)
+        serializer.save(repo=repo)
+        new_repo_url = REPO_URL + repo_name + '/'
+        if not os.path.isdir(new_repo_url):
+            return HttpResponse("this repo doesn't exist")
+        class_name = request.POST['name']
+        new_class_url = new_repo_url + class_name + '/'
+        if os.path.isdir(new_class_url):
+            return HttpResponse("this class has already occupied")
+        os.makedirs(new_class_url)
+        return HttpResponse("create class " + class_name + " successfully")
+    return HttpResponse("fail")
+
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def uploadedFile(request, reponame, classname):
     if request.method == 'GET':
         return HttpResponse("fail")
@@ -54,7 +74,7 @@ def uploadedFile(request, reponame, classname):
     if not os.path.isdir(newRepoUrl):
         return HttpResponse("this repo doesn't exist")
     secret = request.POST['secret']
-    with open(newRepoUrl + '/secret.txt', 'r' ) as f:
+    with open(newRepoUrl + '/secret.txt', 'r') as f:
         realSecret = f.read()
     if secret != realSecret:
         return HttpResponse("secret is not true")
@@ -66,11 +86,10 @@ def uploadedFile(request, reponame, classname):
     for t in request.FILES.getlist('img'):
         IMAGE_NAME += 1
         with open(newClassUrl + str(IMAGE_NAME) + '.png', 'wb+') as f:
-            for each in t.chunks(): #request.FILES['img'].chunks():
+            for each in t.chunks():  # request.FILES['img'].chunks():
                 f.write(each)
     #     print(each)
     #     print('zzz')
-        # image = Image.open(io.BytesIO(each))
-        # image.save(newClassUrl + 'aa', 'PNG')
+    # image = Image.open(io.BytesIO(each))
+    # image.save(newClassUrl + 'aa', 'PNG')
     return HttpResponse("success")
-
