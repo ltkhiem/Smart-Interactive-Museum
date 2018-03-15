@@ -5,8 +5,8 @@ import requests
 
 urlpattern = re.compile('^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$')
 external_API = False 
-serverAnhAnURL = 'http://188.166.244.173:8000/recognise'
-serverTienURL = 'http://localhost:50001/recognize/'
+serverAnhAnURL = 'http://188.166.244.173:8000/'
+serverTienURL = 'http://104.199.208.75/'
 baseurl = 'FaceDetect/bin/'
 cmd = './' + baseurl + 'darknet detector test ' + baseurl + 'yolo-face.names ' + baseurl + 'yolo-face-test.cfg ' + baseurl + 'yolo-face.weights -thresh 0.24 stream crop'
 maxFileSize = 5 * 2 ** 20
@@ -35,12 +35,24 @@ def requestAnhAn(content):
     return [data['code']]
 
 def requestTien(content):
+    serverTienRecognize = serverTienURL + 'recognize/'
     if type(content).__name__ == 'InMemoryUploadedFile':
-        r = requests.post(serverTienURL, files={'image':content})
+        r = requests.post(serverTienRecognize, files={'image':content})
     else:
-        r = requests.get(serverTienURL + '?url=' + content)
+        r = requests.get(serverTienRecognize + '?url=' + content)
     data = json.loads(r.text)
     print(data)
+    return data
+
+def trainTien(content):
+    img = content.FILES['img']
+    label = content.POST['label']
+    serverTienTrain = serverTienURL + 'addsample/'
+    if type(img).__name__ == 'InMemoryUploadedFile':
+        r = requests.post(serverTienTrain, files={'image':img}, data={'label': label})
+    else:
+        r = requests.get(serverTienTrain + '?url=' + img)
+    data = r.text
     return data
 
 

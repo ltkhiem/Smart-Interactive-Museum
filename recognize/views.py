@@ -12,7 +12,6 @@ def rec_list(request):
         server = request.POST['server']
         if (server == 'anhAn'):
             response = ServerCallAPI.requestAnhAn(img)
-            print(response)
             if response[0] != 0:
                 return HttpResponse('fail')
             else:
@@ -25,7 +24,6 @@ def rec_list(request):
             return HttpResponse(res)
         elif server == 'tien':
             response = ServerCallAPI.requestTien(img)
-            print(response)
             return HttpResponse(str(response))
         else:
             print("not an valid server")
