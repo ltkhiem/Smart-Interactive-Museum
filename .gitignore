@@ -217,3 +217,10 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# Data
+FaceNetv2/20170511-185253/
+FaceNetv2/my_classifier.pkl
+FaceNetv2/output_dir/
+FaceNetv2/output_dir/*
+

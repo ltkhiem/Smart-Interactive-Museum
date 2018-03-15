@@ -8,8 +8,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-import facenet
-import detect_face
+from FaceNetv2 import facenet
+from FaceNetv2 import detect_face
 import os
 from os.path import join as pjoin
 import sys
@@ -19,24 +19,40 @@ import math
 import pickle
 from sklearn.svm import SVC
 from sklearn.externals import joblib
+from Log import logger
+import zipfile
+import FaceNetv2.Make_aligndata_git as make_aligndata
+import FaceNetv2.Make_classifier_git as make_classifier
 
-print('Creating networks and loading parameters')
+if not os.path.isdir('FaceNetv2/20170511-185253'):
+    logger.info('Downloading model...')
+    import FaceNetv2.download_model
+    logger.info('Downloading completed!')
+
+if not os.path.isfile('FaceNetv2/my_classifier.pkl'):
+    logger.info('Preprocessing data...')
+    make_aligndata.run()
+    make_classifier.run()
+    logger.info('Preprocessing data completed!')
+
+
+minsize = 20  # minimum size of face
+threshold = [0.6, 0.7, 0.7]  # three steps's threshold
+factor = 0.709  # scale factor
+image_size = 182
+input_image_size = 160
+
+
+logger.info('Creating networks and loading parameters')
 with tf.Graph().as_default():
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.6)
     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
     with sess.as_default():
-        pnet, rnet, onet = detect_face.create_mtcnn(sess, './')
+        pnet, rnet, onet = detect_face.create_mtcnn(sess, 'FaceNetv2/')
 
-        minsize = 20  # minimum size of face
-        threshold = [0.6, 0.7, 0.7]  # three steps's threshold
-        factor = 0.709  # scale factor
-        image_size = 182
-        input_image_size = 160
-
-        HumanNames = os.listdir('data')    #train human name
 
         print('Loading feature extraction model')
-        modeldir = '20170511-185253/20170511-185253.pb'
+        modeldir = 'FaceNetv2/20170511-185253/20170511-185253.pb'
         facenet.load_model(modeldir)
 
         images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
@@ -44,11 +60,22 @@ with tf.Graph().as_default():
         phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train:0")
         embedding_size = embeddings.get_shape()[1]
 
-        classifier_filename = 'my_classifier.pkl'
-        classifier_filename_exp = os.path.expanduser(classifier_filename)
-        with open(classifier_filename_exp, 'rb') as infile:
-            (model, class_names) = pickle.load(infile)
-            print('load classifier file-> %s' % classifier_filename_exp)
+
+def load():
+    global HumanNames, model
+    HumanNames = sorted(os.listdir('FaceNetv2/data'))    #train human name
+
+    print('Human Names: {}'.format(HumanNames))
+
+    classifier_filename = 'FaceNetv2/my_classifier.pkl'
+    classifier_filename_exp = os.path.expanduser(classifier_filename)
+    with open(classifier_filename_exp, 'rb') as infile:
+        (model, class_names) = pickle.load(infile)
+    print('load classifier file-> %s' % classifier_filename_exp)
+
+load()
+
+logger.info('loading model completed!')
 
 def recognize(frame):
     #frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5)    #resize frame (optional)
@@ -97,11 +124,8 @@ def recognize(frame):
             best_class_indices = np.argmax(predictions, axis=1)
             best_class_probabilities = predictions[np.arange(len(best_class_indices)), best_class_indices]
 
-            # print('result: ', best_class_indices[0])
-            result_name = 'unknown'
-            for H_i in HumanNames:
-                if HumanNames[best_class_indices[0]] == H_i:
-                    result_name = HumanNames[best_class_indices[0]]
+            print('result index: ', best_class_indices[0])
+            result_name = HumanNames[best_class_indices[0]]
 
             result_names.append(result_name)
 
@@ -109,13 +133,34 @@ def recognize(frame):
     else:
         print('Unable to align')
 
+    return ([], np.array([]))
 
-test_dir = 'test/'
-for test_image_name in os.listdir(test_dir):
-    test_image_file = os.path.join(test_dir, test_image_name)
 
-    test_image = cv2.imread(test_image_file)
+def train(filezip):
+    with open('train_data.zip', 'wb') as f:
+        f.write(filezip)
 
-    res = recognize(test_image)
+    logger.info('Extracting train data...')
+    zip_ref = zipfile.ZipFile('train_data.zip', 'r')
+    zip_ref.extractall('FaceNetv2/data')
+    zip_ref.close()
+    os.remove('train_data.zip')
+    logger.info('Extracting train data completed!')
 
-    print("image name {}: {}".format(test_image_name, res))
+    logger.info('Training...')
+    make_aligndata.run()
+    make_classifier.run()
+    load()
+    logger.info('Training completed!')
+
+
+
+#test_dir = 'test/'
+#for test_image_name in os.listdir(test_dir):
+    # test_image_file = os.path.join(test_dir, test_image_name)
+
+    # test_image = cv2.imread(test_image_file)
+
+    # res = recognize(test_image)
+
+    # print("image name {}: {}".format(test_image_name, res))
