@@ -32,3 +32,21 @@ def rec_list(request):
             raise Exception
     else:
         return HttpResponse("fail")
+
+@csrf_exempt
+def train(request):
+    if request.method == 'POST':
+        filezip = request.FILES['train_data']
+        server = request.POST['server']
+        if (server == 'anhAn'):
+            raise Exception('Not Implemented this feature')
+        elif server == 'tien':
+            response = ServerCallAPI.Tien_train(filezip)
+            print(response)
+            return HttpResponse(str(response))
+        else:
+            print("not an valid server")
+            raise Exception
+    else:
+        return HttpResponse("fail")
+
