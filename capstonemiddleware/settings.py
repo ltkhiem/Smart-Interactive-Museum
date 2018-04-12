@@ -124,7 +124,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 REPO_URL = os.getenv('HOME') + '/capstoneRepo/'
 IMAGE_NAME = 1
-# APPEND_SLASH=False
+APPEND_SLASH=True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

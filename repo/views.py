@@ -1,7 +1,10 @@
 import os
+from capstonemiddleware.utils import zipdir
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from rest_framework import generics
 import zipfile
 from rest_framework.authentication import TokenAuthentication
@@ -68,13 +71,13 @@ def create_class(request, repo_name):
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
-def uploadedFile(request, reponame, classname):
+def uploadedFile(request, repo_name, class_name):
     if request.method == 'GET':
         return HttpResponse("fail")
-    newRepoUrl = REPO_URL + reponame + '/'
+    newRepoUrl = REPO_URL + repo_name + '/'
     if not os.path.isdir(newRepoUrl):
         return HttpResponse("this repo doesn't exist")
-    newClassUrl = newRepoUrl + classname + '/'
+    newClassUrl = newRepoUrl + class_name + '/'
     if not os.path.isdir(newClassUrl):
         return HttpResponse("this class hasn't exist")
     # print(type(request.FILES['img'].chunk))
@@ -93,13 +96,19 @@ def uploadedFile(request, reponame, classname):
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
-def uploadedFile(request, reponame, classname):
+def uploadZip(request, repo_name):
     if request.method == 'GET':
         return HttpResponse("fail")
-    newRepoUrl = REPO_URL + reponame + '/'
+    newRepoUrl = REPO_URL + repo_name + '/'
     if not os.path.isdir(newRepoUrl):
         return HttpResponse("this repo doesn't exist")
     data = request.FILES['data']
-    with open(newRepoUrl + 'tam.zip', 'wb') as f:
-        f.write(data)
+    zipUrl = newRepoUrl + 'tam.zip'
+    with open(zipUrl, 'wb') as f:
+        for each in data.chunks():
+            f.write(each)
+    with zipfile.ZipFile(zipUrl) as f:
+        f.extractall(newRepoUrl)
+    return HttpResponse('success')
      
+

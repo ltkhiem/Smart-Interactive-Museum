@@ -13,7 +13,7 @@ from capstonemiddleware import ServerCallAPI
 @api_view(['POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
-def rec_list(request):
+def rec_list(request, repo_name):
     if request.method == 'POST':
         img = request.FILES['img']
         server = request.POST['server']
@@ -30,7 +30,10 @@ def rec_list(request):
                 res = json.dumps(res)
             return HttpResponse(res)
         elif server == 'tien':
-            response = ServerCallAPI.requestTien(img)
+            response = ServerCallAPI.requestTien(repo_name, img)
+            return HttpResponse(str(response))
+        elif server == 'tu':
+            response = ServerCallAPI.requestTu(repo_name, img)
             return HttpResponse(str(response))
         else:
             print("not an valid server")

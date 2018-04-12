@@ -23,16 +23,22 @@
 - type: POST
 - url: **baseurl**/repo/**reponame**/**classname**/upload/
 - body: {img: image file }
+- response: fail/success
 
-## Upload zip  => not done yet
+## Upload zip
 
 - type: POST
-- url: **baseurl**/repo/**reponame**/uploadrar/
+- url: **baseurl**/repo/**reponame**/uploadzip/
 - body: {data: file.zip}
+- response: fail/success
 
-## Train class
+## Train repo
 
-- url: **baseurl**/repo/**reponame**/train/
+- url: **baseurl**/train/repo/**reponame**/
+
+## Train image ???
+
+- url: **baseurl**/train/repo/**reponame**/
 
 ## Recognize
 
