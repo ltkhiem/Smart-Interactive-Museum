@@ -19,9 +19,6 @@ def train_image(request):
     if request.POST['server'] == 'tien':
         response = ServerCallAPI.trainTien(request)
         return HttpResponse(str(response))
-    elif request.POST['server'] == 'tu':
-        response = ServerCallAPI.trainTu(request.FILES['data'])
-        return HttpResponse(str(response))
     else:
         return HttpResponse('fail')
 
@@ -30,6 +27,12 @@ def train_image(request):
 @permission_classes((IsAuthenticated,))
 def train_repo(request, repo_name):
     newRepoUrl = REPO_URL + repo_name + '/'
-    zipfile = zipdir(newRepoUrl, repo_name)
-    res = ServerCallAPI.trainTu(zipfile, request.META['Authorization'][6:])
+    zipdir(newRepoUrl, repo_name)
+    zipfile = open(repo_name+'.zip', 'rb')
+    server = request.POST['server']
+    if server == 'tu':
+        #it is incomplete
+        res = ServerCallAPI.trainTu(zipfile, request.META['HTTP_AUTHORIZATION'][6:])
+    elif server == 'tien':
+        res = ServerCallAPI.trainTien(zipfile)
     return HttpResponse(res)

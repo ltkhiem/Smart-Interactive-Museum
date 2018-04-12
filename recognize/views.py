@@ -40,3 +40,18 @@ def rec_list(request, repo_name):
             raise Exception
     else:
         return HttpResponse("fail")
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def demo(request):
+    img = request.FILES['img']
+    token = request.META['HTTP_AUTHORIZATION'][6:]
+    return HttpResponse(ServerCallAPI.demoTu(img, token))
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def rec_everything(request):
+    img = request.FILES['img']
+    ServerCallAPI.requestTien(img)

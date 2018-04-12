@@ -35,29 +35,21 @@ def requestAnhAn(content):
 
     return [data['code']]
 
-def requestTien(repo_name, content):
+def requestTien(img):
     serverTienRecognize = serverTienURL + 'recognize/'
-    if type(content).__name__ == 'InMemoryUploadedFile':
-        r = requests.post(serverTienRecognize, files={'image':content})
-    else:
-        r = requests.get(serverTienRecognize + '?url=' + content)
+    r = requests.post(serverTienRecognize, files={'image':img})
     data = json.loads(r.text)
     print(data)
     return data
 
-def trainTien(content):
-    img = content.FILES['img']
-    label = content.POST['label']
-    serverTienTrain = serverTienURL + 'addsample/'
-    if type(img).__name__ == 'InMemoryUploadedFile':
-        r = requests.post(serverTienTrain, files={'image':img}, data={'label': label})
-    else:
-        r = requests.get(serverTienTrain + '?url=' + img)
-    data = r.text
-    return data
+def trainTien(zipfile):
+    serverTienTrain =serverTienURL + 'train/'
+    r = requests.post(serverTienTrain, files={'train_data':zipfile})
+    return r.text
 
 def trainTu(zipdata, token):
     serverTuTrain = serverTuURL + 'train/'
+    print(zipdata, token)
     r = requests.post(serverTuTrain, files={'data':zipdata}, data={'token':token})
     return r.text
 
@@ -70,6 +62,6 @@ def requestTu(repo_name, token, img):
 def demoTu(img, token):
     serverTuRecognize = serverTuURL + 'demo' + '/'
     r = requests.post(serverTuRecognize, files={'img':img}, data={'token':token})
-    result = json.load(r.text)
-    return result
+    print(r.text)
+    return r.text
 

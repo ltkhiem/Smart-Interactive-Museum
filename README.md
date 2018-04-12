@@ -40,11 +40,23 @@
 
 - url: **baseurl**/train/repo/**reponame**/
 
-## Recognize
+## Recognize by repo
 
 - type: POST
 - url: **baseurl**/recognize/**reponame**/      ??? => change when use many repo to: **baseurl**/**classname**/recognize
 - body: {img: test image, server: tien/anhAn}
+
+## Recognize demo
+
+- type: POST
+- url: **baseurl**/recognize/demo/
+- body: {img: test image}
+
+## Recognize everything
+
+- type: POST
+- url: **baseurl**/recognize/everything/
+- body: {img: test image}
 
 
 What is smart interactive museum?

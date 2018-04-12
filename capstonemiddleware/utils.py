@@ -8,4 +8,3 @@ def zipdir(path, filename):
         print(root,dirs,files)
         for file in files:
             ziph.write(os.path.join(root, file),os.path.relpath(os.path.join(root, file),os.path.join('..',path)))
-
