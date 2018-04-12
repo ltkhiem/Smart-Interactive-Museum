@@ -7,30 +7,37 @@
 ## Create repo
 
 - type: POST
-- url: **baseurl**/repo/createrepo
-- request: {reponame: string, secret: string}
+- url: **baseurl**/repo/create_repo/
+- request: {name: string, type: string}
 - response: true/false
+
 ## Create class
 
 - type: POST
-- url: **baseurl**/repo/**reponame**/createclass
-- request: {secret: string, classname: string}
+- url: **baseurl**/repo/**reponame**/create_class/
+- request: {name: string}
 - response: true/false
+
 ## Upload file
 
 - type: POST
-- url: **baseurl**/repo/**reponame**/**classname**/upload
-- body: {img: image file, secret: string}
+- url: **baseurl**/repo/**reponame**/**classname**/upload/
+- body: {img: image file }
+
+## Upload rar  => not done yet
+
+- type: POST
+- url: **baseurl**/repo/**reponame**/uploadrar/
+- body: {data: file.zip}
+
 ## Train class
 
-??? Ask Tien? Train class or train all repo?
-
-
+- url: **baseurl**/repo/**reponame**/train/
 
 ## Recognize
 
 - type: POST
-- url: **baseurl**/recognize/      ??? => change when use many repo to: **baseurl**/**classname**/recognize
+- url: **baseurl**/recognize/**reponame**/      ??? => change when use many repo to: **baseurl**/**classname**/recognize
 - body: {img: test image, server: tien/anhAn}
 
 
