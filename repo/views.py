@@ -3,6 +3,7 @@ import os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
+import zipfile
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -73,11 +74,6 @@ def uploadedFile(request, reponame, classname):
     newRepoUrl = REPO_URL + reponame + '/'
     if not os.path.isdir(newRepoUrl):
         return HttpResponse("this repo doesn't exist")
-    secret = request.POST['secret']
-    with open(newRepoUrl + '/secret.txt', 'r') as f:
-        realSecret = f.read()
-    if secret != realSecret:
-        return HttpResponse("secret is not true")
     newClassUrl = newRepoUrl + classname + '/'
     if not os.path.isdir(newClassUrl):
         return HttpResponse("this class hasn't exist")
@@ -93,3 +89,17 @@ def uploadedFile(request, reponame, classname):
     # image = Image.open(io.BytesIO(each))
     # image.save(newClassUrl + 'aa', 'PNG')
     return HttpResponse("success")
+
+@api_view(['POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def uploadedFile(request, reponame, classname):
+    if request.method == 'GET':
+        return HttpResponse("fail")
+    newRepoUrl = REPO_URL + reponame + '/'
+    if not os.path.isdir(newRepoUrl):
+        return HttpResponse("this repo doesn't exist")
+    data = request.FILES['data']
+    with open(newRepoUrl + 'tam.zip', 'wb') as f:
+        f.write(data)
+     

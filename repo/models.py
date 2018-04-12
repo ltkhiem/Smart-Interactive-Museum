@@ -5,6 +5,7 @@ from django.db import models
 
 class Repo(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    type = models.CharField(max_length=255)
     owner = models.ForeignKey(
         'auth.User',
         on_delete=models.CASCADE

@@ -9,7 +9,7 @@ class RepoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Repo
-        fields = ('id', 'name', 'owner', 'date_created', 'date_modified')
+        fields = ('id', 'name', 'type', 'owner', 'date_created', 'date_modified')
         read_only_fields = ('date_created', 'date_modified')
 
 

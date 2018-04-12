@@ -24,7 +24,7 @@
 - url: **baseurl**/repo/**reponame**/**classname**/upload/
 - body: {img: image file }
 
-## Upload rar  => not done yet
+## Upload zip  => not done yet
 
 - type: POST
 - url: **baseurl**/repo/**reponame**/uploadrar/
