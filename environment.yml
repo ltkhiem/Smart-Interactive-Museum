@@ -1,4 +1,4 @@
-name: capstone-light
+name: capstone
 channels:
 - conda-forge
 - defaults
@@ -50,12 +50,16 @@ dependencies:
 - libgfortran-ng=7.2.0=h9f7466a_2
 - libprotobuf=3.4.1=h5b8497f_0
 - libstdcxx-ng=7.2.0=h7a57d05_2
+- mkl=2018.0.1=h19d6760_4
+- numpy=1.14.1=py36h3dfced4_1
+- opencv=3.3.1=py36h6cbbc71_1
 - pcre=8.41=hc27e229_1
 - requests=2.14.2=py36_0
 - pip:
   - absl-py==0.1.10
   - bleach==1.5.0
   - django-multiupload==0.5.2
+  - djangorestframework==3.7.7
   - h5py==2.7.1
   - html5lib==0.9999999
   - keras==2.1.4
@@ -69,5 +73,5 @@ dependencies:
   - tensorflow==1.5.0
   - tensorflow-tensorboard==1.5.1
   - werkzeug==0.14.1
-prefix: /home/che/anaconda3/envs/capstone-light
+prefix: /home/che/anaconda3/envs/capstone
 

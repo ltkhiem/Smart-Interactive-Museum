@@ -1,5 +1,6 @@
 import json
 import re
+from capstonemiddleware.settings import serverAnhAnURL, serverTienURL, serverTuURL
 
 import requests
 
