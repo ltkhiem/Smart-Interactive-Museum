@@ -69,3 +69,33 @@ How to run the project:
         - in the project directory, run python manage.py runserver
         - Now the server has been deployed, to test it you can request an image to the server by POST/GET method which the body contains the raw bytes of that image attaching with the key 'img'.
 
+
+---------------------
+# Deployment
+- create a host server with sudo user.
+
+- install anaconda 
+wget https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh
+bash Anaconda3-5.1.0-Linux-x86_64.sh
+
+- setting anaconda for bash 
+add this line to ~/.bashrc file
+export PATH=/home/che/anaconda3/bin:$PATH
+
+- clone project
+git clone https://github.com/ltkhiem/Smart-Interactive-Museum.git && cd Smart-Interactive-Museum
+
+- install capstone virtual enviroment by anaconda
+conda env create -f environment.yml
+
+- activate capstone enviroment
+source activate capstone
+
+- config iptables 
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+- runserver 
+ python manage.py runserver 0.0.0.0:8080
+
+
+
