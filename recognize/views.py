@@ -54,4 +54,4 @@ def demo(request):
 @permission_classes((IsAuthenticated,))
 def rec_everything(request):
     img = request.FILES['img']
-    ServerCallAPI.requestTien(img)
+    return HttpResponse(ServerCallAPI.requestTien(img))
