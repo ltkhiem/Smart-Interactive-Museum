@@ -75,27 +75,36 @@ How to run the project:
 - create a host server with sudo user.
 
 - install anaconda 
+
 wget https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh
+
 bash Anaconda3-5.1.0-Linux-x86_64.sh
 
 - setting anaconda for bash 
+
 add this line to ~/.bashrc file
+
 export PATH=/home/che/anaconda3/bin:$PATH
 
 - clone project
+
 git clone https://github.com/ltkhiem/Smart-Interactive-Museum.git && cd Smart-Interactive-Museum
 
 - install capstone virtual enviroment by anaconda
+
 conda env create -f environment.yml
 
 - activate capstone enviroment
+
 source activate capstone
 
 - config iptables 
+
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
 
 - runserver 
- python manage.py runserver 0.0.0.0:8080
+
+python manage.py runserver 0.0.0.0:8080
 
 
 
