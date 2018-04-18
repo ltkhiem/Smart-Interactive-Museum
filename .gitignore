@@ -8,9 +8,11 @@
 .idea/*
 FaceNet/weights/*
 **/weights/*
+**/weights.*
 **/__pycache__/*
 **/*.swp
 **/*.pyc
+**/*.zip
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -55,3 +57,4 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+**/*.log
