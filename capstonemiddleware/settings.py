@@ -137,5 +137,5 @@ REST_FRAMEWORK = {
 
 serverVGGNetURL = 'http://188.166.244.173:8000/'
 serverFaceNetURL = 'http://104.199.208.75/'
-serverObjectURL = 'http://35.201.166.3/'
+serverYoloNetURL = 'http://35.201.166.3/'
 
