@@ -135,7 +135,7 @@ REST_FRAMEWORK = {
     )
 }
 
-serverAnhAnURL = 'http://188.166.244.173:8000/'
-serverTienURL = 'http://104.199.208.75/'
-serverTuURL = 'http://35.201.166.3/'
+serverVGGNetURL = 'http://188.166.244.173:8000/'
+serverFaceNetURL = 'http://104.199.208.75/'
+serverObjectURL = 'http://35.201.166.3/'
 
