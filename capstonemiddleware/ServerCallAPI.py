@@ -1,6 +1,6 @@
 import json
 import re
-from capstonemiddleware.settings import serverAnhAnURL, serverTienURL, serverTuURL
+from capstonemiddleware.settings import serverVGGNetURL, serverFaceNetURL, serverYoloNetURL
 
 import requests
 

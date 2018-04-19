@@ -36,10 +36,6 @@
 
 - url: **baseurl**/train/repo/**reponame**/
 
-## Train image ???
-
-- url: **baseurl**/train/repo/**reponame**/
-
 ## Recognize by repo
 
 - type: POST
